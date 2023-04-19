@@ -1,0 +1,31 @@
+.overflowBox {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid lightgray;
+  background-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  max-width: 700px;
+}
+
+.overflowBox:hover {
+  border: 1px solid rgb(175, 175, 175);
+}
+
+.overflowBox__info {
+  display: flex;
+  align-items: center;
+}
+
+.overflowBox__info > h5 {
+  color: rgb(129, 129, 129);
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: large;
+}
+
+.overflowBox__overflow {
+  display: flex;
+  margin-top: 8px;
+}

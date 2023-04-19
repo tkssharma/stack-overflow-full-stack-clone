@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres-stackoverflow:
+    environment:
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=development_pass
+      - POSTGRES_MULTIPLE_DATABASES="overflow-api","overflow-api-testing"
+    volumes:
+      - ./docker-utils:/docker-entrypoint-initdb.d
+      - sv_api_data:/data/postgres
+    ports:
+      - 5436:5432
+             
+volumes:
+  sv_api_data: {}
