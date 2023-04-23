@@ -12,6 +12,7 @@ export class QuestionBodyDto {
   @ApiProperty({
     description: 'question_text [name, description for search',
     required: false,
+    example: "Why useState hooks are npt working with latest react route change"
   })
   @IsString()
   @MinLength(2)
@@ -20,11 +21,29 @@ export class QuestionBodyDto {
   @ApiProperty({
     description: 'tags for creating question',
     required: false,
-    example: 'java, node js, react',
+    example: 'java, node_js, react',
   })
   @IsString()
   @MinLength(2)
   public tags!: string;
+
+  @ApiProperty({
+    description: 'url for info',
+    required: false,
+    example: 'https://stackoverflow.com/questions/50493011/react-ui-router-test-state-change',
+  })
+  @IsString()
+  @MinLength(2)
+  public url!: string;
+
+  @ApiProperty({
+    description: 'image upload url',
+    required: false,
+    example: 'https://cdn-media-1.freecodecamp.org/images/1*TKvlTeNqtkp1s-eVB5Hrvg@2x.png',
+  })
+  @IsString()
+  @MinLength(2)
+  public image!: string;
 
   @ApiProperty({
     description: 'technology name like java',
@@ -36,7 +55,7 @@ export class QuestionBodyDto {
   public technology!: string;
 }
 
-export class UpdateQuestionBody extends PartialType(QuestionBodyDto) {}
+export class UpdateQuestionBody extends PartialType(QuestionBodyDto) { }
 
 export class SearchParamDto {
   @ApiProperty({

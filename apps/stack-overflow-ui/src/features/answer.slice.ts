@@ -13,13 +13,29 @@ interface QuestionsAnswerState {
 
 export const fetchQuestionsAnswers = createAsyncThunk(
   "fetch/QuestionsAnswers",
-  (id: string) => {
+  async (id: string) => {
     axios
       .get(`/questions/${id}/answers`)
       .then((res) => res.data)
       .catch((error) => error);
   }
 );
+export const updateAnswersVotes = createAsyncThunk(
+  "fetch/QuestionsAnswers",
+  async ({ questionId, answerId, vote }: { questionId: string, answerId: string, vote: boolean }, { getState }) => {
+    const state = getState() as any;
+    const access_token = state?.user?.user?.access_token;
+    const url = `/questions/${questionId}/answers/${answerId}?${vote ? `action_type=upvote` : `action_type=downvote`}`
+    const response = await axios.put(url, {}, {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    });
+    return response.data.questions;
+  }
+);
+
+
 
 const initialState = {
   answers: {

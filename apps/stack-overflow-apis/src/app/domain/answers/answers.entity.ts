@@ -32,6 +32,9 @@ export class AnswerEntity extends BaseEntity {
   @Column({ type: 'varchar', default: null })
   public user_id!: string;
 
+  @Column({ type: 'jsonb', default: null })
+  public user_metadata!: any;
+
   @ManyToOne(() => QuestionEntity, (event) => event.answers)
   @JoinColumn({ name: 'question_id', referencedColumnName: 'id' })
   public question!: QuestionEntity;

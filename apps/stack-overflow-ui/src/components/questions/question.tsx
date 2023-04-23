@@ -17,8 +17,10 @@ import "react-quill/dist/quill.snow.css";
 import ReactTimeAgo from "react-time-ago";
 import axios from "axios";
 import ReactHtmlParser from "html-react-parser";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../features/user.slice";
+import { useNavigate } from "react-router-dom";
+import { updateAnswersVotes } from "../../features/answer.slice";
 
 function LastSeen({ date }: any) {
   return (
@@ -31,45 +33,31 @@ function Post({ post }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [answer, setAnswer] = useState("");
   const Close = <CloseIcon />;
+  const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
 
+  const navigate = useNavigate();
   const handleQuill = (value: any) => {
     setAnswer(value);
   };
-  // console.log(answer);
+  
+  const handleUpVote  = (questionId: string , answerId: string) => {
+    dispatch(updateAnswersVotes({questionId, answerId, vote: true}))
+  }
+  const handleDownVote = (questionId: string , answerId: string) => {
+    dispatch(updateAnswersVotes({questionId, answerId, vote: false}))
+  }
 
   const handleSubmit = async () => {
-    if (post?._id && answer !== "") {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      const body = {
-        answer: answer,
-        questionId: post?._id,
-        user: user,
-      };
-      await axios
-        .post("/api/answers", body, config)
-        .then((res) => {
-          console.log(res.data);
-          alert("Answer added succesfully");
-          setIsModalOpen(false);
-          window.location.href = "/";
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+
   };
   return (
     <div className="post">
       <div className="post__info">
-        <Avatar src={post?.user?.photo} />
-        <h4>{post?.user?.userName}</h4>
-
+        <Avatar src={post?.user_metadata?.picture} />
+        <h4>{post?.user_metadata?.email}</h4>
+        <h6>{post?.user_metadata?.name}</h6>
         <small>
         </small>
       </div>
@@ -79,7 +67,6 @@ function Post({ post }: any) {
           <button
             onClick={() => {
               setIsModalOpen(true);
-              console.log(post?._id);
             }}
             className="post__btnAnswer"
           >
@@ -99,11 +86,11 @@ function Post({ post }: any) {
             }}
           >
             <div className="modal__question">
-              <h1>{post?.questionName}</h1>
+              <h1>{post?.question_text}</h1>
               <p>
-                asked by <span className="name">{post?.user?.userName}</span> on{" "}
+                asked by <span className="name">{post?.user_metadata?.email}</span> on{" "}
                 <span className="name">
-                  {new Date(post?.createdAt).toLocaleString()}
+                  {new Date(post?.created_at).toLocaleString()}
                 </span>
               </p>
             </div>
@@ -124,19 +111,11 @@ function Post({ post }: any) {
             </div>
           </Modal>
         </div>
-        {post.questionUrl !== "" && <img src={post.questionUrl} alt="url" />}
-      </div>
-      <div className="post__footer">
-        <div className="post__footerAction">
-          <ArrowUpwardOutlined />
-          <ArrowDownwardOutlined />
-        </div>
-        <RepeatOneOutlined />
-        <ChatBubbleOutlined />
-        <div className="post__footerLeft">
-          <ShareOutlined />
-          <MoreHorizOutlined />
-        </div>
+        {post.image !== "" && <img
+          onClick={() => {
+            navigate(`/questions/${post.id}`);
+          }}
+          src={post.image} alt="url" />}
       </div>
       <p
         style={{
@@ -146,7 +125,7 @@ function Post({ post }: any) {
           margin: "10px 0",
         }}
       >
-        {post?.allAnswers?.length} Answer(s)
+        {post?.answers?.length} Answer(s)
       </p>
 
       <div
@@ -157,7 +136,7 @@ function Post({ post }: any) {
         }}
         className="post__answer"
       >
-        {post?.allAnswers?.map((_a: any) => (
+        {post?.answers?.map((_a: any) => (
           <>
             <div
               style={{
@@ -180,20 +159,34 @@ function Post({ post }: any) {
                 }}
                 className="post-answered"
               >
-                <Avatar src={_a?.user?.photo} />
+                <Avatar src={_a?.user_metadata?.picture} />
                 <div
                   style={{
                     margin: "0px 10px",
                   }}
                   className="post-info"
                 >
-                  <p>{_a?.user?.userName}</p>
+                  <p>{_a?.user_metadata?.name}</p>
                   <span>
-                    <LastSeen date={_a?.createdAt} />
+                    {_a?.created_at}
                   </span>
                 </div>
               </div>
-              <div className="post-answer">{ReactHtmlParser(_a?.answer)}</div>
+              <div className="post-answer">{ReactHtmlParser(_a?.answer_text)}</div>
+              <div className="post__footer">
+                <div className="post__footerAction">
+                  {_a?.upvote}
+                  <ArrowUpwardOutlined onClick={() => handleUpVote(post.id, _a.id)} />
+                  {_a?.downvote}
+                  <ArrowDownwardOutlined onClick={() => handleDownVote(post.id, _a.id)} />
+                </div>
+                <RepeatOneOutlined />
+                <ChatBubbleOutlined />
+                <div className="post__footerLeft">
+                  <ShareOutlined />
+                  <MoreHorizOutlined />
+                </div>
+              </div>
             </div>
           </>
         ))}

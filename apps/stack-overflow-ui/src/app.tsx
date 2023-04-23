@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import Questions from "./components/questions/overflow";
-import QuestionWithAnswers from "./components/question-with-answers/overflow";
 
 import Login from "./components/auth/login";
 import { auth } from "./firebase";
@@ -32,7 +31,7 @@ function App() {
       <div>
         <Routes>
            <Route path="/" element={<Questions />} />
-           <Route path="/:id" element={<QuestionWithAnswers />} />
+           <Route path="/questions/:id" element={<Questions />} />
            <Route path="/login" element={<Login />} />
         </Routes>
       </div>

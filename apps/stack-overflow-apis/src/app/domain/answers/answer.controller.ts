@@ -55,7 +55,7 @@ import {
 )
 @ApiTags('answers')
 export class AnswerController {
-  constructor(private readonly service: AnswerService) {}
+  constructor(private readonly service: AnswerService) { }
 
   @HttpCode(HttpStatus.CREATED)
   @ApiConsumes('application/json')
@@ -76,6 +76,7 @@ export class AnswerController {
     @Body() body: AnswerBodyDto,
     @Param() param: QuestionByIdDto,
   ) {
+    console.log(user);
     return await this.service.createAnswerOfQuestion(user, body, param);
   }
 
@@ -95,10 +96,9 @@ export class AnswerController {
   @Put('/:id/answers/:answer_id')
   public async updateQuestionById(
     @Query() query: ActionOnAnswerDto,
-    @Body() body: AnswerBodyDto,
     @Param() param: QuestionAnswerByIdDto,
   ) {
-    return await this.service.updateQuestionById(body, param, query);
+    return await this.service.updateQuestionById(param, query);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -117,4 +117,21 @@ export class AnswerController {
   public async fetchAnswers(@Param() param: QuestionByIdDto) {
     return await this.service.fetchAnswers(param);
   }
+  @HttpCode(HttpStatus.OK)
+  @ApiConsumes('application/json')
+  @ApiNotFoundResponse({ description: NO_ENTITY_FOUND })
+  @ApiForbiddenResponse({ description: UNAUTHORIZED_REQUEST })
+  @ApiUnprocessableEntityResponse({ description: BAD_REQUEST })
+  @ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
+  @ApiOperation({
+    description: 'api should return created questions',
+  })
+  @ApiCreatedResponse({
+    description: 'returned created questions successfully',
+  })
+  @Get('/:id/answers')
+  public async fetchData(@Param() param: QuestionByIdDto) {
+    return await this.service.fetchAnswers(param);
+  }
+
 }

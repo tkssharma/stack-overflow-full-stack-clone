@@ -24,10 +24,9 @@ export class AnswerService {
     private questionRepo: Repository<QuestionEntity>,
     @InjectRepository(AnswerEntity)
     private answerRepo: Repository<AnswerEntity>,
-  ) {}
+  ) { }
 
   async updateQuestionById(
-    body: AnswerBodyDto,
     param: QuestionAnswerByIdDto,
     query: ActionOnAnswerDto,
   ) {
@@ -52,18 +51,18 @@ export class AnswerService {
       }
       if (action_type === ActionType.upvote) {
         const latestUpVote = answer.upvote + 1;
-        return await this.answerRepo.save({
+        await this.answerRepo.save({
           id: answer_id,
-          upvote: latestUpVote,
-          ...body,
+          upvote: latestUpVote
         });
+        return await this.answerRepo.findOne({ where: { id: answer_id } })
       }
       const latestDownVote = answer.downvote + 1;
-      return await this.answerRepo.save({
+      await this.answerRepo.save({
         id: answer_id,
         downvote: latestDownVote,
-        ...body,
       });
+      return await this.answerRepo.findOne({ where: { id: answer_id } })
     } catch (err) {
       throw err;
     }
@@ -86,8 +85,12 @@ export class AnswerService {
       }
 
       return await this.answerRepo.save({
-        ...body,
         user_id: user.uid,
+        user_metadata: {
+          email: user.email,
+          picture: user.picture,
+          name: user.name
+        },
         question,
       });
     } catch (err) {

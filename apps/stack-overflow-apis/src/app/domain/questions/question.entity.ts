@@ -27,6 +27,12 @@ export class QuestionEntity extends BaseEntity {
   public comment!: string;
 
   @Column({ type: 'varchar', default: null })
+  public url!: string;
+
+  @Column({ type: 'varchar', default: null })
+  public image!: string;
+
+  @Column({ type: 'varchar', default: null })
   public user_id!: string;
 
   @Column({ type: 'jsonb', default: null })

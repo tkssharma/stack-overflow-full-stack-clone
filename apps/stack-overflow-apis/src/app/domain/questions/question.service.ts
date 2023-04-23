@@ -23,14 +23,18 @@ export class QuestionService {
   constructor(
     @InjectRepository(QuestionEntity)
     private questionRepo: Repository<QuestionEntity>,
-  ) {}
+  ) { }
 
   async createQuestion(body: QuestionBodyDto, user: UserMetaData) {
     try {
       return await this.questionRepo.save({
         ...body,
         user_id: user.uid,
-        user_metadata: { email: user.email },
+        user_metadata: {
+          email: user.email,
+          picture: user.picture,
+          name: user.name
+        },
       });
     } catch (err) {
       throw err;
@@ -94,6 +98,8 @@ export class QuestionService {
         'questions_text',
         'tags',
         'technology',
+        'url',
+        'image',
         'user_metadata',
         'user_id',
         'comment',
